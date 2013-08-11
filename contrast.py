@@ -54,6 +54,10 @@ while True:
             print "Quit Event"
             pygame.quit()
             sys.exit()
+        if event.type == pygame.KEYDOWN:
+            print "key event", event.key
+            if event.key == pygame.K_q:
+                sys.exit()
         if event.type == pygame.VIDEORESIZE:
             size = event.size
             center = (size[0]/2,size[1]/2)
