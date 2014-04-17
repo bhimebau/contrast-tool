@@ -4,7 +4,7 @@ __author__ = "Bryce Himebaugh"
 __copyright__ = "Copyright 2013 Bryce Himebaugh"
 __credits__ = ["Bryce Himebaugh, Jun Zhang"]
 __license__ = "GPL V3"
-__version__ = "0.001"
+__version__ = "0.002"
 __maintainer__ = "Bryce Himebaugh"
 __email__ = "bhimebau@gmail.com"
 __status__ = "prototype"
@@ -15,7 +15,7 @@ import math
 imagefile = ''
 prefix = 'cdata'
 try:
-    opts, args = getopt.getopt(sys.argv[1:],"hi:o:p:i:",["image=","prefix="])
+    opts, args = getopt.getopt(sys.argv[1:],"hi:o:p:i:g:",["image=","prefix="])
 except getopt.GetoptError:
     print opts
     print args
@@ -23,12 +23,21 @@ except getopt.GetoptError:
     sys.exit(2)
 for opt, arg in opts:
     if opt == '-h':
-        print 'contrast.py -i <target image file> -p <output_datafile_prefix>'
+        print 'contrast.py -i <target image file> -p <output datafile prefix> -g <gamma correction file>'
         sys.exit()
     elif opt in ("-i", "--image"):
         imagefile = arg
     elif opt in ("-p", "--prefix"):
         datafile = arg
+    elif opt in ("-g", "--gamma"):
+        gammafile = arg
+
+try:
+   gf = open(gammafile)
+except IOError:
+   print 'Error: gammafile not found:', gammafile
+   sys.exit()
+
 try:
    with open(imagefile): pass
 except IOError:
