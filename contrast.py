@@ -11,6 +11,22 @@ __status__ = "prototype"
 
 import pygame, sys, getopt, time
 import math
+import numpy 
+
+# def grayscale(img):
+ #    arr = pygame.surfarray.array3d(img)
+#     avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in arr]
+#     arr = numpy.array([[[avg,avg,avg] for avg in col] for col in avgs])
+#     arrg = arr.astype(int)
+#     return pygame.surfarray.make_surface(arrg)
+
+
+# def adjust_grayscale(img):
+#     arr = pygame.surfarray.array3d(img)
+#     avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in arr]    
+ #   arr = numpy.array([[[avg,avg,avg] for avg in col] for col in avgs])
+ #    arrg = arr.astype(int)
+  #  return pygame.surfarray.make_surface(arrg)    
 
 imagefile = ''
 prefix = 'cdata'
@@ -56,6 +72,31 @@ background=pygame.Surface((window.get_rect().width, window.get_rect().height))
 background.fill((255, 255, 255))
 image=pygame.image.load(imagefile)
 image=image.convert()
+
+# imagegrey = grayscale(image)
+
+image_arr = pygame.surfarray.array3d(image)
+image_avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in image_arr]    
+image_arr = numpy.array([[[avg,avg,avg] for avg in col] for col in image_avgs])
+image_arrg = image_arr.astype(int)
+image_greyscale =  pygame.surfarray.make_surface(image_arrg)
+
+#black_counter = 0
+# white_counter = 0
+
+# for col in image_avgs:
+#     print col 
+#     print "newline\n"
+#     for avg in col:
+#         if avg > 125: 
+#             print "White = %f"%(avg)
+#             white_counter = white_counter + 1
+#         else:
+#             print "Black = %f"%(avg)
+#             black_counter = black_counter + 1
+        # print "Here is the avg", avg
+# print black_counter, white_counter, black_counter + white_counter, 150*150 
+
 center_image = (image.get_rect().width/4,image.get_rect().height/4)
 image_loc = (center[0]-center_image[0],center[1]-center_image[1])
 contrast_value=0
@@ -63,6 +104,25 @@ mm=contrast_value/255;
 #y=1.6973*(mm**3) - 1.7375*(mm**2) +1.0494*mm - 0.0286;
 y=1.6973*(mm**3) - 1.7375*(mm**2) +1.0494*mm;
 contrast_value= contrast_value+ float(255*y);
+
+# image_arrg = image_arr.astype(int)
+# image_grey_adjusted = pygame.surfarray.make_surface(image_arrg)    
+# imagegrey_array_float = numpy.array([[[avg,avg,avg] for avg in col] for col in avgs])
+# imagegrey_array_int = arr.astype(int)
+# imagegrey = pygame.surfarray.make_surface(imagegrey_array_int)
+# print image.get_rect().width,image.get_rect().height
+# print "Pixel Center", imagegrey.get_at((75,75))
+# print "TL", imagegrey.get_at((0,0))
+# print "TR", imagegrey.get_at((149,0))
+# print "BL", imagegrey.get_at((0,149))
+# print "BR", imagegrey.get_at((149,149))
+# print "Pixel Center", imagegrey.get_at((75,75))
+# print "Pixel Center", imagegrey.get_at((75,75))
+# print "Pixel Top Left", imagegrey.get_at((0,0)
+# print "Pixel Top Right", imagegrey.get_at((image.get_rect().width/2,0))
+# print "Pixel Bottom Right", imagegrey.get_at((image.get_rect().width/2,image.get_rect().height/2))
+# print "Pixel Bottom Left", imagegrey.get_at((0,image.get_rect().height/2))
+
 while True:
     # Manage quit and window resize events
     for event in pygame.event.get():
@@ -113,7 +173,7 @@ while True:
     # sent the new surface to the screen
     window.fill((255, 255, 255))
     window.blit(background, background.get_rect())
-    window.blit(image, image_loc)
+    window.blit(image_greyscale, image_loc)
     pygame.time.delay(20)
     pygame.display.update()
     print (contrast_value);
