@@ -33,18 +33,66 @@ class GreyImage():
         self.raw_image_surface = self.raw_image_surface.convert()
         self.raw_image_array = pygame.surfarray.array3d(self.raw_image_surface)
         self.image_avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in self.raw_image_array]    
-        self.image_array = numpy.array([[[avg,avg,avg] for avg in col] for col in self.image_avgs])
-        self.image_arrg = self.image_array.astype(int)
-        self.image_greyscale =  pygame.surfarray.make_surface(self.image_arrg)
+        self.reference_image_array = self.threshold_image(self.image_avgs)
 
-    def change_greyscale (self,value):
-        
+#        self.image_array = numpy.array([[[avg,avg,avg] for avg in col] for col in self.image_avgs])
+#        self.image_arrg = self.image_array.astype(int)
+#        self.image_greyscale =  pygame.surfarray.make_surface(self.image_arrg)
+        self.image_greyscale =  pygame.surfarray.make_surface(self.reference_image_array)
+ #       for pixel in self.image_arrg:
+ #           print pixel
 
-        
+    def threshold_image (self, imavgs):
+        image_array = []
+        for col in imavgs:
+            column_array = []
+            for avg in col:
+                if avg > 125:
+                    avg = 255
+                else:
+                    avg = 0
+                column_array.append([avg,avg,avg])
+            image_array.append(column_array)
+        return image_array
+
+
+    def write_greyscale (self,value):
+        if (value > 254):
+            value = 254
+        if (value < 0):
+            value = 0
+
+        white_counter = 0
+        black_counter = 0
+        image_array = []
+        column_array = []
+        for col in self.image_avgs:
+            for avg in col:
+                print avg
+#                column_array.append([value
+
+            print col 
+            print "newline\n"
+            for avg in col:
+                if avg > 125: 
+                    print "White = %f"%(avg)
+                    white_counter = white_counter + 1
+                else:
+                    print "Black = %f"%(avg)
+                    black_counter = black_counter + 1
+                print "Here is the avg", avg
+        print black_counter, white_counter, black_counter + white_counter, 150*150 
 
 
 if __name__ == '__main__':
-    sm = SyncroMesh(height=8, xdim=10, ydim=10, zdim=1) 
-    sm.change_group_resistance("G-7-3-0-G-7-4-0", '45k')
-    sm.report_devices()
+    pygame.init()
+    window=pygame.display.set_mode((0, 0),pygame.RESIZABLE)
+    pygame.display.set_caption("Contrast Tool")
+    center=(window.get_rect().width/2,window.get_rect().height/2)
+    background=pygame.Surface((window.get_rect().width, window.get_rect().height))
+    background.fill((255, 255, 255))
+
+    gi = GreyImage(imagefile="large-E.jpg", gammafile="gamma") 
+    gi.write_greyscale(30)
+
 
