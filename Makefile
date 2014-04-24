@@ -1,4 +1,4 @@
-all: contrast
+all: greyimage
 
 contrast: contrast.py 
 	python contrast.py -g gamma -i large-E.jpg
