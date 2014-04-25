@@ -12,21 +12,7 @@ __status__ = "prototype"
 import pygame, sys, getopt, time
 import math
 import numpy 
-
-# def grayscale(img):
- #    arr = pygame.surfarray.array3d(img)
-#     avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in arr]
-#     arr = numpy.array([[[avg,avg,avg] for avg in col] for col in avgs])
-#     arrg = arr.astype(int)
-#     return pygame.surfarray.make_surface(arrg)
-
-
-# def adjust_grayscale(img):
-#     arr = pygame.surfarray.array3d(img)
-#     avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in arr]    
- #   arr = numpy.array([[[avg,avg,avg] for avg in col] for col in avgs])
- #    arrg = arr.astype(int)
-  #  return pygame.surfarray.make_surface(arrg)    
+import greyimage
 
 imagefile = ''
 prefix = 'cdata'
@@ -48,17 +34,18 @@ for opt, arg in opts:
     elif opt in ("-g", "--gamma"):
         gammafile = arg
 
-try:
-   gf = open(gammafile)
-except IOError:
-   print 'Error: gammafile not found:', gammafile
-   sys.exit()
+# try:
+#    gf = open(gammafile)
+# except IOError:
+#    print 'Error: gammafile not found:', gammafile
+#    sys.exit()
+# 
+# try:
+#    with open(imagefile): pass
+# except IOError:
+#    print 'Error: imagefile not found:', imagefile
+#    sys.exit()
 
-try:
-   with open(imagefile): pass
-except IOError:
-   print 'Error: imagefile not found:', imagefile
-   sys.exit()
 timestr = time.strftime("%m%d%Y-%H%M%S")
 datafile = prefix + "-" + timestr
 
@@ -68,18 +55,17 @@ window=pygame.display.set_mode((0, 0),pygame.RESIZABLE)
 pygame.display.set_caption("Contrast Tool")
 center=(window.get_rect().width/2,window.get_rect().height/2)
 background=pygame.Surface((window.get_rect().width, window.get_rect().height))
-#background.fill((0, 0, 0))
 background.fill((255, 255, 255))
-image=pygame.image.load(imagefile)
-image=image.convert()
+gi = greyimage.GreyImage(imagefile="large-E.jpg", gammafile="gamma")
 
-# imagegrey = grayscale(image)
+# image=pygame.image.load(imagefile)
+# image=image.convert()
 
-image_arr = pygame.surfarray.array3d(image)
-image_avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in image_arr]    
-image_arr = numpy.array([[[avg,avg,avg] for avg in col] for col in image_avgs])
-image_arrg = image_arr.astype(int)
-image_greyscale =  pygame.surfarray.make_surface(image_arrg)
+# image_arr = pygame.surfarray.array3d(image)
+# image_avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in image_arr]    
+# image_arr = numpy.array([[[avg,avg,avg] for avg in col] for col in image_avgs])
+# image_arrg = image_arr.astype(int)
+# image_greyscale =  pygame.surfarray.make_surface(image_arrg)
 
 #black_counter = 0
 # white_counter = 0
@@ -97,8 +83,8 @@ image_greyscale =  pygame.surfarray.make_surface(image_arrg)
         # print "Here is the avg", avg
 # print black_counter, white_counter, black_counter + white_counter, 150*150 
 
-center_image = (image.get_rect().width/4,image.get_rect().height/4)
-image_loc = (center[0]-center_image[0],center[1]-center_image[1])
+center_image = (gi.image_greyscale.get_rect().width/4,gi.image_greyscale.get_rect().height/4)
+image_loc = (center[0]-gi.center_image[0],center[1]-gi.center_image[1])
 contrast_value=0
 mm=contrast_value/255;
 #y=1.6973*(mm**3) - 1.7375*(mm**2) +1.0494*mm - 0.0286;
@@ -122,7 +108,7 @@ contrast_value= contrast_value+ float(255*y);
 # print "Pixel Top Right", imagegrey.get_at((image.get_rect().width/2,0))
 # print "Pixel Bottom Right", imagegrey.get_at((image.get_rect().width/2,image.get_rect().height/2))
 # print "Pixel Bottom Left", imagegrey.get_at((0,image.get_rect().height/2))
-
+image_loc = (center[0]-gi.center_image[0],center[1]-gi.center_image[1])
 while True:
     # Manage quit and window resize events
     for event in pygame.event.get():
@@ -139,8 +125,8 @@ while True:
         if event.type == pygame.VIDEORESIZE:
             size = event.size
             center = (size[0]/2,size[1]/2)
-            image_loc = (center[0]-center_image[0],center[1]-center_image[1])
-            print center,center_image,image_loc
+            image_loc = (center[0]-gi.center_image[0],center[1]-gi.center_image[1])
+#             print center,center_image,image_loc
 
     # Grab the change in the y position of the mouse, apply this to the current contrast value.
     mdelta = pygame.mouse.get_rel()
@@ -166,14 +152,12 @@ while True:
         df.write(outstr)
 
     # write to the alpha channel
-    image.set_alpha(contrast_value)
-    
-   
-    
+#     image.set_alpha(contrast_value)
+    gi.write_greyscale(contrast_value)
     # sent the new surface to the screen
     window.fill((255, 255, 255))
     window.blit(background, background.get_rect())
-    window.blit(image_greyscale, image_loc)
+    window.blit(gi.image_greyscale, image_loc)
     pygame.time.delay(20)
     pygame.display.update()
     print (contrast_value);
