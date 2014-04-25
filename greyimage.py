@@ -12,6 +12,7 @@ __status__ = "prototype"
 import pygame, sys, getopt, time
 import math
 import numpy 
+import csv
 
 class GreyImage():
     

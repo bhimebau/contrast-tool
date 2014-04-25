@@ -1,7 +1,7 @@
-# output image as 8 bit greyscale rather than changing alpha
+Done # output image as 8 bit greyscale rather than changing alpha
 # Read Gamma File into a gamma list 
 # Increment contrast with mouse data, use gamma list to correlate contrast to 8-bit greyscale
-# Add a "b" character trap to allow the baseline to be captures
-  - Note the capture in the log file 
-# Add a "r" character trap to allow the clinician to revert the contrast back to baseline 
-  - Note the capture in the log file 
+Done # Add a "b" character trap to allow the baseline to be captures
+Done   - Note the capture in the log file 
+Done # Add a "r" character trap to allow the clinician to revert the contrast back to baseline 
+Done  - Note the capture in the log file 
