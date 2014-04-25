@@ -38,10 +38,27 @@ class GreyImage():
         self.image_arrg = self.image_arr.astype(int)
         self.image_greyscale = pygame.surfarray.make_surface(self.image_arrg)
         self.mask = pygame.mask.from_threshold(self.image_greyscale,(50,50,50),(50,50,50))
-        self.greyscale_masked = numpy.ma.array([[[avg,avg,avg] for avg in col] for col in self.image_avgs],mask=self.mask,fill_value=75)
-        
+        self.msize = self.mask.get_size()
+#        self.gmask = []
+        for i in range(msize[0]):
+#            gcol = []
+            for j in range(msize[1]):
+               if self.mask.get_at((i,j)):
+                   self.image_greyscale.set_at((i,j),(175,175,175))
+               else:
+                   self.image_greyscale.set_at((i,j),(255,255,255))
+#                if self.mask.get_at((i,j)):
+#                     gcol.append([True,True,True])
+#                 else:
+#                     gcol.append([False,False,False])
+#            self.gmask.append(gcol)
+ #       print self.gmask.shape
+ #       print "True at %d %d\n"%(i,j)
             
-
+#        self.greyscale_masked = numpy.ma.array([[[avg,avg,avg] for avg in col] for col in self.image_avgs],mask=self.gmask,fill_value=125)
+#        self.image_greyscale_masked_int = self.greyscale_masked.astype(int)
+#        self.image_greyscale = pygame.surfarray.make_surface(self.image_greyscale_masked_int)
+            
 #        self.reference_image_array = self.threshold_image(self.image_avgs)
 
 #        self.image_array = numpy.array([[[avg,avg,avg] for avg in col] for col in self.image_avgs])
@@ -53,19 +70,19 @@ class GreyImage():
         
         self.center_image = (self.image_greyscale.get_rect().width/4,self.image_greyscale.get_rect().height/4)
         
-        self.gsi = pygame.surfarray.array3d(self.image_greyscale)
-        self.gsa = numpy.array(self.gsi)
+#         self.gsi = pygame.surfarray.array3d(self.image_greyscale)
+  #       self.gsa = numpy.array(self.gsi)
 
-    def threshold_image (self):
-        column_list = []
-        for col in self.image_avgs:
+#     def threshold_image (self):
+#         column_list = []
+#        for col in self.image_avgs:
             
-            for avg in col:
-                if avg > 122:
-                    avg = 255
-                else:
-                    avg = 0 
-                pixel = numpy.array([avg,avg,avg])
+#             for avg in col:
+#                if avg > 122:
+#                     avg = 255
+#                else:
+#                     avg = 0 
+#                 pixel = numpy.array([avg,avg,avg])
 #            column_array = []
 #            for avg in col:
 #                if avg > 125:
@@ -78,8 +95,18 @@ class GreyImage():
 
 
     def write_greyscale (self,value):
-        self.gsa[:,:,:] = value
-        return pygame.surfarray.make_surface(self.gsa)
+        for i in range(self.msize[0]):
+            for j in range(self.msize[1]):
+               if self.mask.get_at((i,j)):
+                   self.image_greyscale.set_at((i,j),(value,value,value))
+               else:
+                   self.image_greyscale.set_at((i,j),(255,255,255))
+
+
+ #        for 
+        pass
+        #       self.gsa[:,:,:] = value
+ #       return pygame.surfarray.make_surface(self.gsa)
 
 #k        return self.mask.fill((value,value,value))
         #return self.mask.fill()
@@ -147,7 +174,7 @@ if __name__ == '__main__':
                 print center,gi.center_image,image_loc
             window.fill((255, 255, 255))
             window.blit(background, background.get_rect())
-#            window.blit(gi.image_greyscale, image_loc)
+            window.blit(gi.image_greyscale, image_loc)
             
 #           gisize = gi.mask.get_size()
 #           print gisize
@@ -155,7 +182,7 @@ if __name__ == '__main__':
 #           print girect
 #           tmp = gi.image_greyscale.copy()
 #           tmp.blit(gi.mask,girect.topleft,girect,special_flags=pygame.BLEND_RGBA_MULT)
-            window.blit(gi.write_greyscale(75), image_loc)
+#            window.blit(gi.write_greyscale(75), image_loc)
 #           window.blit(tmp,image_loc,window.get_rect().clip(girect))
 #            pygame.time.delay(20)
             pygame.display.update()
