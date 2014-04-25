@@ -13,11 +13,13 @@ import pygame, sys, getopt, time
 import math
 import numpy 
 import csv
+import bisect
 
 class GreyImage():
     
-    def __init__(self, imagefile = "imagefile", gammafile = "gamma"):
+    def __init__(self, imagefile, gammafile):
         self.gammafile = gammafile
+        print self.gammafile
         try:
             self.gf = open(gammafile)
         except IOError:
@@ -29,6 +31,13 @@ class GreyImage():
         except IOError:
             print 'Error: imagefile not found:', imagefile
             sys.exit()
+
+        print "about to process csv"
+        with open(self.gammafile, 'rU') as f:
+            gcf = csv.reader(f)
+            self.gammalist = []
+            for row in gcf:
+                self.gammalist.append((row[0],row[1]))
 
         self.raw_image_surface = pygame.image.load(imagefile)
         self.raw_image_surface = self.raw_image_surface.convert()
@@ -48,13 +57,30 @@ class GreyImage():
         self.center_image = (self.image_greyscale.get_rect().width/4,self.image_greyscale.get_rect().height/4)
 
     def write_greyscale (self,value):
+        cvalue = self.correction_lookup(value);
         for i in range(self.msize[0]):
             for j in range(self.msize[1]):
                if self.mask.get_at((i,j)):
-                   self.image_greyscale.set_at((i,j),(value,value,value))
+                   self.image_greyscale.set_at((i,j),(cvalue,cvalue,cvalue))
                else:
                    self.image_greyscale.set_at((i,j),(255,255,255))
 
+    def correction_lookup(self,value):
+        for i in range(len(self.gammalist)):
+            x0 = float(self.gammalist[i][0])
+            y0 = float(self.gammalist[i][1])
+            if (x0 == value):
+                return (int(y0))
+            elif (x0 > value):
+                if (i == 0):
+                    return (int(y0))
+                else:
+                    x1 = float(self.gammalist[i-1][0])
+                    y1 = float(self.gammalist[i-1][1])
+                    interp_val = y0 + (((y1-y0)/(x1-x0)) * (value-x0))
+                    return int(interp_val)
+
+             
 if __name__ == '__main__':
     pygame.init()
     window=pygame.display.set_mode((0, 0),pygame.RESIZABLE)

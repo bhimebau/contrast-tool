@@ -44,7 +44,7 @@ pygame.display.set_caption("Contrast Tool")
 center=(window.get_rect().width/2,window.get_rect().height/2)
 background=pygame.Surface((window.get_rect().width, window.get_rect().height))
 background.fill((255, 255, 255))
-gi = greyimage.GreyImage(imagefile="large-E.jpg", gammafile="gamma")
+gi = greyimage.GreyImage(imagefile, gammafile)
 center_image = (gi.image_greyscale.get_rect().width/4,gi.image_greyscale.get_rect().height/4)
 image_loc = (center[0]-gi.center_image[0],center[1]-gi.center_image[1])
 contrast_val=0
