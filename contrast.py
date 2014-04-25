@@ -92,7 +92,7 @@ while True:
         contrast_val = 255;
 
     if mdelta > 0: 
-        outstr = "%d %d\n"%(pygame.time.get_ticks(),contrast_val)
+        outstr = "%d %d\n"%(pygame.time.get_ticks(),gi.correction_lookup(contrast_val))
         df.write(outstr)
 
     gi.write_greyscale(contrast_val)
