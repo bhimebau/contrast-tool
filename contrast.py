@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 
 __author__ = "Bryce Himebaugh"
 __copyright__ = "Copyright 2013 Bryce Himebaugh"
@@ -16,12 +16,13 @@ import greyimage
 
 imagefile = ''
 prefix = 'cdata'
+initial_contrast = 0
 try:
-    opts, args = getopt.getopt(sys.argv[1:],"hi:o:p:i:g:",["image=","prefix="])
+    opts, args = getopt.getopt(sys.argv[1:],"hi:o:p:i:g:c:",["image=","prefix="])
 except getopt.GetoptError:
     print opts
     print args
-    print 'contrast.py <target image file> -p <output_datafile_prefix>'
+    print 'contrast.py <target image file> -g gammfile -p <output_datafile_prefix> -c initial_constrast'
     sys.exit(2)
 for opt, arg in opts:
     if opt == '-h':
@@ -33,6 +34,8 @@ for opt, arg in opts:
         datafile = arg
     elif opt in ("-g", "--gamma"):
         gammafile = arg
+    elif opt in ("-c", "--contrast"):
+        initial_contrast = arg
 
 timestr = time.strftime("%m%d%Y-%H%M%S")
 datafile = prefix + "-" + timestr
@@ -51,6 +54,7 @@ contrast_val=0
 mm=contrast_val/255;
 y=1.6973*(mm**3) - 1.7375*(mm**2) +1.0494*mm;
 contrast_val= contrast_val+ float(255*y);
+contrast_val = float(initial_contrast)
 baseline = contrast_val
 
 image_loc = (center[0]-gi.center_image[0],center[1]-gi.center_image[1])
@@ -63,17 +67,17 @@ while True:
             sys.exit()
         if event.type == pygame.KEYDOWN:
 #             print "key event", event.key
-            out = "%d            %d\n"%(pygame.time.get_ticks(),event.key)
+            out = "%d Quit\n"%(pygame.time.get_ticks())
             df.write(out)
             if event.key == pygame.K_q:
                 sys.exit()
             if event.key == pygame.K_b:
                 baseline = contrast_val
-                out = "%d            %d baseline %d\n"%(pygame.time.get_ticks(),event.key,baseline)
+                out = "%d baseline %d\n"%(pygame.time.get_ticks(),gi.correction_lookup(contrast_val))
                 df.write(out)
             if event.key == pygame.K_r:
                 contrast_val = baseline
-                out = "%d            %d revert %d\n"%(pygame.time.get_ticks(),event.key,baseline)
+                out = "%d revert %d\n"%(pygame.time.get_ticks(),gi.correction_lookup(contrast_val))
                 df.write(out)
             
         if event.type == pygame.VIDEORESIZE:
@@ -100,7 +104,7 @@ while True:
     window.fill((255, 255, 255))
     window.blit(background, background.get_rect())
     window.blit(gi.image_greyscale, image_loc)
-    pygame.time.delay(20)
+#    pygame.time.delay(20)
     pygame.display.update()
 #     print (contrast_val);
 
