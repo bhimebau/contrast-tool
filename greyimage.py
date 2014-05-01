@@ -46,7 +46,7 @@ class GreyImage():
         self.image_arr = numpy.array([[[avg,avg,avg] for avg in col] for col in self.image_avgs])
         self.image_arrg = self.image_arr.astype(int)
         self.image_greyscale = pygame.surfarray.make_surface(self.image_arrg)
-        self.mask = pygame.mask.from_threshold(self.image_greyscale,(50,50,50),(50,50,50))
+        self.mask = pygame.mask.from_threshold(self.image_greyscale,(20,20,20),(50,50,50))
         self.msize = self.mask.get_size()
         for i in range(self.msize[0]):
             for j in range(self.msize[1]):
